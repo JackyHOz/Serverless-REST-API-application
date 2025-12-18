@@ -49,6 +49,8 @@ GitHub Actions (`.github/workflows/ci.yml`) run on every push/PR to keep the pro
 
 Details on the workflow design and how to reproduce the steps locally are documented in [`docs/cicd.md`](docs/cicd.md).
 
+The workflow targets a self-hosted runner so teams can access internal dependencies (private registries, shared build caches, or corporate network tooling) while keeping the same validation surface as GitHub-hosted runners.
+
 ## Monitoring & Alerting
 
 Terraform provisions CloudWatch dashboards and alarms covering Lambda errors/latency/throttles, API Gateway traffic/latency, and DynamoDB throttling/system errors. Alarm actions are configurable per environment via `monitoring_alarm_actions`, and dashboards visualize service health at a glance. Structured JSON logging in the Lambda handler makes CloudWatch Logs Insights queries trivial; see [`docs/monitoring.md`](docs/monitoring.md) for metric rationale, thresholds, and troubleshooting queries.
