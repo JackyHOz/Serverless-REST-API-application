@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-validation:
+    name: Terraform Validation
+    runs-on: self-hosted
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Check formatting
+        run: terraform fmt -recursive -check
+
+      - name: Terraform init (no backend)
+        working-directory: infra/envs/dev
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        working-directory: infra/envs/dev
+        run: terraform validate
+
+  lambda-validation:
+    name: Lambda Validation & Packaging
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: functions/items
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Lambda
+        run: npm run build
+
+      - name: Package Lambda artifact
+        run: npm run package
+
+  security-scan:
+    name: Terraform Security Scans
+    runs-on: self-hosted
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Checkov scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infra
+
+  docs-lint:
+    name: Markdown Lint
+    runs-on: self-hosted
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Run markdownlint-cli2
+        uses: DavidAnson/markdownlint-cli2-action@v15
+        with:
+          globs: |
+            **/*.md

@@ -1,0 +1,15 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Node.js artifacts
+node_modules/
+npm-debug.log*
+yarn-error.log
+functions/items/dist/
+
+# OS
+.DS_Store

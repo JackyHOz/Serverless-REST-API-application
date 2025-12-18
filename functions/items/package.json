@@ -1,0 +1,18 @@
+{
+  "name": "items-lambda",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Serverless REST API handlers for item management.",
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "index.mjs",
+  "scripts": {
+    "build": "node --check src/index.mjs",
+    "package": "npm run build && rm -rf dist && mkdir -p dist && zip -rq dist/items-lambda.zip . -x \"dist/*\""
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.515.0"
+  }
+}
