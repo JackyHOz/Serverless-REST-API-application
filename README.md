@@ -44,7 +44,7 @@ GitHub Actions (`.github/workflows/ci.yml`) run on every push/PR to keep the pro
 
 * Terraform validation enforces formatting, initializes modules without a backend, and runs `terraform validate`.
 * Lambda validation sets up Node.js 22, installs dependencies, type-checks via `node --check`, and packages the code to mimic deployment.
-* Checkov scan the Terraform tree for security misconfigurations with no AWS credentials required.
+* tfsec + Checkov scan the Terraform tree for security misconfigurations with no AWS credentials required.
 * Markdown linting keeps documentation readable.
 
 Details on the workflow design and how to reproduce the steps locally are documented in [`docs/cicd.md`](docs/cicd.md).
@@ -145,7 +145,8 @@ Packaging (`npm run package`) happens automatically in CI, but you can run it lo
 * **Encryption & versioning** – S3 artifacts enforce versioning and SSE, DynamoDB enables encryption and point-in-time recovery, and CloudWatch logs optionally accept a KMS key.
 * **Validation** – Variables include type constraints and regex/enum validation to catch misconfiguration before apply.
 * **Extensibility** – Modules now cover the artifact bucket, Lambda packaging, IAM, DynamoDB, logging, and API Gateway so additional environments or integrations simply wire in new instances.
-* **Testing** – Terraform code is structured for Terratest or `terraform validate` in CI. Tests can live under `tests/` referencing the modules directly; omitted here per the optional requirement but the module boundaries were designed with this in mind.
+* **Testing** – Terraform code is structured for Terratest or `terraform validate` in CI. 
+* **Reminder** – The REST Lambda currently simulates CRUD operations and does not write to DynamoDB. Swap in real SDK commands (`PutItem`, `Query`, etc.) once data contracts are finalized.
 
 ## Assumptions & Trade-offs
 
